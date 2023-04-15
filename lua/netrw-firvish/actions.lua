@@ -6,11 +6,7 @@ function M.delete(path)
   if has_trash then
     os.execute("trash " .. path.filename)
   else
-    if path:is_dir() then
-      path:rmdir()
-    else
-      path:rm()
-    end
+    path:rm { recursive = path:is_dir() }
   end
 end
 

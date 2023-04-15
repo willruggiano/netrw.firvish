@@ -1,6 +1,39 @@
 ==============================================================================
                                                                  *netrw-firvish*
 
-This is a template for a firvish.nvim lua plugin.
+Like |netrw| but implemented using firvish.nvim
+
+Setup:
+>
+require("firvish").setup()
+require("netrw-firvish").setup(opts?)
+<
+
+Invoke via |:Firvish|:
+>
+:Firvish[!] netrw [pattern]
+<
+
+Invoke via `firvish.extensions`:
+>
+require("firvish").extensions.netrw { ... }
+<
+
+                                                          *netrw-firvish-config*
+`netrw-firvish.setup()` accepts the following options (default values are given):
+>
+require("netrw-firvish").setup {
+  classify = true,
+  devicons = pcall(require, "nvim-web-devicons"),
+  remove_file = function(path: Plenary.Path)
+    if vim.fn.executable "trash" then
+      -- Delete the path using `trash-cli`
+    else
+      -- Delete the file using Plenary.Path:rm (uses libuv under the hood)
+    end
+  end,
+  show_hidden = false,
+}
+<
 
 vim:tw=78:ts=8:noet:ft=help:norl:

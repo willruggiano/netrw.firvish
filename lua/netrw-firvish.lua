@@ -1,6 +1,22 @@
 ---@mod netrw-firvish
 ---@brief [[
----|netrw| replacement implemented as a firvish.nvim plugin.
+---Like |netrw| but implemented using firvish.nvim
+---
+---Setup:
+--->
+---require("firvish").setup()
+---require("netrw-firvish").setup(opts?)
+---<
+---
+---Invoke via |:Firvish|:
+--->
+---:Firvish[!] netrw [pattern]
+---<
+---
+---Invoke via `firvish.extensions`:
+--->
+---require("firvish").extensions.netrw { ... }
+---<
 ---@brief ]]
 
 local Path = require "plenary.path"
@@ -14,6 +30,29 @@ Extension.__index = Extension
 
 ---@package
 Extension.bufname = "firvish://netrw"
+
+---@tag netrw-firvish-config
+---@brief [[
+---`netrw-firvish.setup()` accepts the following options (default values are given):
+--->
+---require("netrw-firvish").setup {
+---  -- Whether to use icons from nvim-web-devicons
+---  devicons = pcall(require, "nvim-web-devicons"),
+---  -- How to delete paths
+---  remove_file = function(path: Plenary.Path)
+---    if vim.fn.executable "trash" then
+---      -- Delete the path using `trash-cli`
+---      -- See: https://github.com/andreafrancia/trash-cli
+---    else
+---      -- Delete the file using Plenary.Path:rm (uses libuv under the hood)
+---      -- See: https://sourcegraph.com/github.com/nvim-lua/plenary.nvim/-/blob/lua/plenary/path.lua
+---    end
+---  end,
+---  -- Whether to show hidden files
+---  show_hidden = false,
+---}
+---<
+---@brief ]]
 
 ---@package
 Extension.config = {
@@ -186,7 +225,7 @@ function Extension:on_buf_write_post(buffer)
 end
 
 ---@package
-function Extension:update(buffer, args)
+function Extension:execute(buffer, args)
   Extension.config.filter = args.fargs[2]
   Extension.config.show_hidden = args.bang
   set_lines(buffer, args.fargs[2], args.bang)
@@ -198,10 +237,6 @@ local M = {}
 ---@package
 function M.setup(opts)
   require("firvish").register_extension("netrw", Extension.new(opts or {}))
-
-  vim.keymap.set("n", "-", function()
-    vim.cmd.edit(Extension.bufname)
-  end, { desc = "File explorer" })
 end
 
 return M
