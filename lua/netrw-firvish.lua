@@ -5,6 +5,7 @@
 
 local Path = require "plenary.path"
 
+local actions = require "netrw-firvish.actions"
 local devicons = require "netrw-firvish.devicons"
 
 ---@package
@@ -18,6 +19,7 @@ Extension.bufname = "firvish://netrw"
 Extension.config = {
   -- classify = true,
   devicons = devicons.setup(),
+  remove_file = actions.delete,
   show_hidden = false,
 }
 
@@ -116,11 +118,22 @@ local function ls_files(pattern, show_hidden)
 end
 
 local function reconstruct_from_buffer(buffer)
-  --
+  local files = {}
+  for _, line in ipairs(buffer:get_lines()) do
+    table.insert(files, file_from_line(line))
+  end
+  return files
 end
 
 local function compute_difference(current, desired)
-  --
+  return vim.tbl_filter(function(maybe_delete)
+    for _, keep in ipairs(desired) do
+      if maybe_delete:normalize(Extension.config.cwd) == keep:normalize(Extension.config.cwd) then
+        return false
+      end
+    end
+    return true
+  end, current)
 end
 
 local namespace = vim.api.nvim_create_namespace "netrw-firvish"
@@ -144,8 +157,11 @@ local function set_lines(buffer, pattern, show_hidden)
   buffer.opt.modified = false
 end
 
-local function delete_file(file)
-  --
+local function delete_file(path)
+  if vim.fn.confirm("Delete?: " .. path.filename, "&Yes\n&No", 1) ~= 1 then
+    return
+  end
+  Extension.config.remove_file(path)
 end
 
 ---@package
