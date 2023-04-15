@@ -1,0 +1,16 @@
+# direnv
+.devenv/
+.direnv/
+.envrc
+
+# nix
+result
+
+# pre-commit
+.pre-commit-config.yaml
+
+# vim
+tags
+
+# zk
+notebook.db
