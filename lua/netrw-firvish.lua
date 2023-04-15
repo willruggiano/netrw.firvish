@@ -177,7 +177,7 @@ end
 
 local namespace = vim.api.nvim_create_namespace "netrw-firvish"
 
-local function set_lines(buffer, pattern, show_hidden)
+local function set_lines(buffer)
   local lines = {}
   local highlights = {}
   for _, file in ipairs(ls_files()) do
@@ -226,9 +226,7 @@ end
 
 ---@package
 function Extension:execute(buffer, args)
-  Extension.config.filter = args.fargs[2]
-  Extension.config.show_hidden = args.bang
-  set_lines(buffer, args.fargs[2], args.bang)
+  set_lines(buffer)
 end
 
 ---@package
