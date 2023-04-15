@@ -226,6 +226,8 @@ end
 
 ---@package
 function Extension:execute(buffer, args)
+  buffer:open(args.how)
+  -- TODO: Handle args.fargs and/or args.bang
   set_lines(buffer)
 end
 
