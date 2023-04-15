@@ -29,7 +29,7 @@ local Extension = {}
 Extension.__index = Extension
 
 ---@package
-Extension.bufname = "firvish://netrw"
+Extension.bufname = "firvish://./"
 
 ---@tag netrw-firvish-config
 ---@brief [[
@@ -236,17 +236,7 @@ local M = {}
 
 ---@package
 function M.setup(opts)
-  require("firvish").register_extension("netrw", Extension.new(opts or {}))
-
-  vim.api.nvim_create_autocmd("BufEnter", {
-    callback = function(args)
-      local path = vim.fn.fnamemodify(vim.fn.expand(args.file), ":p")
-      if path == "" or not Path:new(path):is_dir() then
-        return
-      end
-      require("firvish").extensions.netrw {}
-    end,
-  })
+  -- require("firvish").register_extension("netrw", Extension.new(opts or {}))
 end
 
 return M
